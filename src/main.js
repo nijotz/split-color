@@ -10,6 +10,10 @@ class App {
     this.imageCanvas = document.createElement('canvas');
     this.imageContext = this.imageCanvas.getContext('2d');
 
+    this.video = document.createElement('video');
+    this.video.autoplay = true;
+    this.video.loop = true;
+
     this.image = new Image();
     this.resize();
     this.settings = new Settings(this);
@@ -46,6 +50,8 @@ class App {
     if (this.pause) { return; }
 
     let ctx = this.context;
+
+    this.imageContext.drawImage(this.video, 0, 0);
 
     let imageData = this.imageContext.getImageData(
         0, 0, this.imageCanvas.width, this.imageCanvas.height);
