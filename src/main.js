@@ -34,23 +34,9 @@ class App {
     let data = imageData.data;
 
     for (var i = 0; i < data.length; i+=4) {
-      if (this.settings.params.red) {
-        data[i] = data[i];
-      } else {
-        data[i] = 0;
-      }
-
-      if (this.settings.params.green) {
-        data[i + 1] = data[i + 1];
-      } else {
-        data[i + 1] = 0;
-      }
-
-      if (this.settings.params.blue) {
-        data[i + 2] = data[i + 2];
-      } else {
-        data[i + 2] = 0;
-      }
+      data[i]     *= this.settings.filterColorRGB.r;
+      data[i + 1] *= this.settings.filterColorRGB.g;
+      data[i + 2] *= this.settings.filterColorRGB.b;
     }
 
     ctx.putImageData(imageData, 0, 0);
