@@ -21,9 +21,14 @@ class App {
       this.imageContext.drawImage(this.image, 0, 0);
       this.animate();
     }
+    this.resize();
   }
 
   resize() {
+    this.canvas.width = window.innerWidth;
+    this.canvas.height = window.innerHeight;
+    this.imageCanvas.width = window.innerWidth;
+    this.imageCanvas.height = window.innerHeight;
   }
 
   animate() {
