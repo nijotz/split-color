@@ -12,16 +12,24 @@ class App {
 
     this.image = new Image();
     this.resize();
-    this.settings = new Settings();
+    this.settings = new Settings(this);
+
+    this.pause = true;
   }
 
   init() {
-    this.image.src = 'white.jpg';
+    this.resize();
+    this.loadImage('rgb.png');
+    this.animate();
+  }
+
+  loadImage(filename) {
+    this.image.src = filename;
+    this.pause = true;
     this.image.onload = () => {
       this.imageContext.drawImage(this.image, 0, 0);
-      this.animate();
-    }
-    this.resize();
+      this.pause = false;
+    };
   }
 
   resize() {
@@ -32,10 +40,17 @@ class App {
   }
 
   animate() {
+    window.requestAnimationFrame(this.animate.bind(this));
+    console.log('pause: ', this.pause);
+    if (this.pause) { return; }
+
     let ctx = this.context;
 
     let imageData = this.imageContext.getImageData(
-        0, 0, this.imageCanvas.width, this.imageCanvas.height);
+        0, 0,
+        this.image.width, this.image.height,
+        0, 0,
+        this.canvas.width, this.canvas.height);
     let data = imageData.data;
 
     for (var i = 0; i < data.length; i+=4) {
@@ -45,7 +60,6 @@ class App {
     }
 
     ctx.putImageData(imageData, 0, 0);
-    window.requestAnimationFrame(this.animate.bind(this));
   };
 }
 

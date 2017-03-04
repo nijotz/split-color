@@ -10,10 +10,13 @@ function hexToRgb(hex) {
 }
 
 export default class Settings {
-  constructor() {
-    // GUI
+  constructor(app) {
+    this.app = app;
+
     this.params = {
       filterColor: '#ff0000',
+      squares: true,
+      white: false
     };
 
     this.filterColorRGB = {
@@ -27,11 +30,28 @@ export default class Settings {
     this.gui.addColor(this.params, 'filterColor')
       .name('Filter Color')
       .onChange(this.setColor.bind(this));
+    this.gui.add(this.params, 'squares')
+      .name('Squares')
+      .onChange(this.changeImage('rgb.png', 'squares'))
+      .listen();
+    this.gui.add(this.params, 'white')
+      .name('White')
+      .onChange(this.changeImage('white.jpg', 'white'))
+      .listen();
 
     this.setColor();
   }
 
   setColor() {
     this.filterColorRGB = hexToRgb(this.params.filterColor);
+  }
+
+  changeImage(filename, param) {
+    return () => {
+      this.params.squares = false;
+      this.params.white = false;
+      this.params[param] = true;
+      this.app.loadImage(filename);
+    }
   }
 }
