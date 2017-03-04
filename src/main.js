@@ -27,7 +27,9 @@ class App {
     this.image.src = filename;
     this.pause = true;
     this.image.onload = () => {
-      this.imageContext.drawImage(this.image, 0, 0);
+      this.imageContext.drawImage(this.image,
+          0, 0,
+          this.canvas.width, this.canvas.height);
       this.pause = false;
     };
   }
@@ -41,16 +43,12 @@ class App {
 
   animate() {
     window.requestAnimationFrame(this.animate.bind(this));
-    console.log('pause: ', this.pause);
     if (this.pause) { return; }
 
     let ctx = this.context;
 
     let imageData = this.imageContext.getImageData(
-        0, 0,
-        this.image.width, this.image.height,
-        0, 0,
-        this.canvas.width, this.canvas.height);
+        0, 0, this.imageCanvas.width, this.imageCanvas.height);
     let data = imageData.data;
 
     for (var i = 0; i < data.length; i+=4) {
