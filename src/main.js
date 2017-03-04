@@ -7,33 +7,45 @@ class App {
     this.canvas = document.getElementById('canvas');
     this.context = this.canvas.getContext('2d');
 
-    this.imageCanvas = document.createElement('canvas');
-    this.imageContext = this.imageCanvas.getContext('2d');
+    this.mediaCanvas = document.createElement('canvas');
+    this.mediaContext = this.mediaCanvas.getContext('2d');
 
-    this.video = document.createElement('video');
-    this.video.autoplay = true;
-    this.video.loop = true;
+    this.media = null;
+    this.pause = true;
 
-    this.image = new Image();
-    this.resize();
     this.settings = new Settings(this);
 
-    this.pause = true;
+    this.resize();
+
   }
 
   init() {
     this.resize();
-    this.loadImage('rgb.png');
+    this.loadMedia('rgb.png');
     this.animate();
   }
 
+  loadMedia(filename, videoFlag) {
+    if (videoFlag) { this.loadVideo(filename); }
+    else { this.loadImage(filename); }
+  }
+
   loadImage(filename) {
-    this.image.src = filename;
     this.pause = true;
-    this.image.onload = () => {
-      this.imageContext.drawImage(this.image,
-          0, 0,
-          this.canvas.width, this.canvas.height);
+
+    this.media = new Image();
+    this.media.src = filename;
+    this.media.onload = () => {
+      this.pause = false;
+    };
+  }
+
+  loadVideo(filename) {
+    this.media = document.createElement('video');
+    this.media.src = filename;
+    this.media.autoplay = true;
+    this.media.loop = true;
+    this.media.onload = () => {
       this.pause = false;
     };
   }
@@ -41,21 +53,19 @@ class App {
   resize() {
     this.canvas.width = window.innerWidth;
     this.canvas.height = window.innerHeight;
-    this.imageCanvas.width = window.innerWidth;
-    this.imageCanvas.height = window.innerHeight;
+    this.mediaCanvas.width = window.innerWidth;
+    this.mediaCanvas.height = window.innerHeight;
   }
 
   animate() {
     window.requestAnimationFrame(this.animate.bind(this));
     if (this.pause) { return; }
 
-    let ctx = this.context;
-
-    this.imageContext.drawImage(this.video, 0, 0);
-
-    let imageData = this.imageContext.getImageData(
-        0, 0, this.imageCanvas.width, this.imageCanvas.height);
-    let data = imageData.data;
+    this.mediaContext.drawImage(this.media, 0, 0,
+        this.mediaCanvas.width, this.mediaCanvas.height);
+    let mediaData = this.mediaContext.getImageData(
+        0, 0, this.mediaCanvas.width, this.mediaCanvas.height);
+    let data = mediaData.data;
 
     for (var i = 0; i < data.length; i+=4) {
       data[i]     *= this.settings.filterColorRGB.r;
@@ -63,7 +73,7 @@ class App {
       data[i + 2] *= this.settings.filterColorRGB.b;
     }
 
-    ctx.putImageData(imageData, 0, 0);
+    this.context.putImageData(mediaData, 0, 0);
   };
 }
 

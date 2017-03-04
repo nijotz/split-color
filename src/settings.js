@@ -16,7 +16,8 @@ export default class Settings {
     this.params = {
       filterColor: '#ff0000',
       squares: true,
-      white: false
+      white: false,
+      video: false
     };
 
     this.filterColorRGB = {
@@ -34,11 +35,15 @@ export default class Settings {
       .onChange(this.setColor.bind(this));
     this.gui.add(this.params, 'squares')
       .name('Squares')
-      .onChange(this.changeImage('rgb.png', 'squares'))
+      .onChange(this.changeMedia('rgb.png', false, 'squares'))
       .listen();
     this.gui.add(this.params, 'white')
       .name('White')
-      .onChange(this.changeImage('white.jpg', 'white'))
+      .onChange(this.changeMedia('white.jpg', false, 'white'))
+      .listen();
+    this.gui.add(this.params, 'video')
+      .name('Video')
+      .onChange(this.changeMedia('colors.webm', true, 'video'))
       .listen();
 
     this.setColor();
@@ -48,12 +53,13 @@ export default class Settings {
     this.filterColorRGB = hexToRgb(this.params.filterColor);
   }
 
-  changeImage(filename, param) {
+  changeMedia(filename, video, param) {
     return () => {
-      this.params.squares = false;
-      this.params.white = false;
+      this.params['squares'] = false;
+      this.params['white'] = false;
+      this.params['video'] = false;
       this.params[param] = true;
-      this.app.loadImage(filename);
+      this.app.loadMedia(filename, video);
     }
   }
 }
