@@ -27,6 +27,8 @@ export default class Settings {
 
     this.gui = new dat.GUI();
 
+    this.gui.remember(this.params);
+
     this.gui.addColor(this.params, 'filterColor')
       .name('Filter Color')
       .onChange(this.setColor.bind(this));
