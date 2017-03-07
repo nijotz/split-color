@@ -67,7 +67,7 @@ class App {
         0, 0, this.mediaCanvas.width, this.mediaCanvas.height);
     let data = mediaData.data;
 
-    for (var i = 0; i < data.length; i+=4) {
+    for (let i = 0; i < data.length; i+=4) {
       data[i]     *= this.settings.filterColorRGB.r;
       data[i + 1] *= this.settings.filterColorRGB.g;
       data[i + 2] *= this.settings.filterColorRGB.b;
@@ -78,7 +78,7 @@ class App {
 }
 
 function main() {
-  var app = new App();
+  let app = new App();
   app.init();
 }
 

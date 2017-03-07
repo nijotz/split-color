@@ -20,6 +20,14 @@ export default class Settings {
       video: false
     };
 
+    this.options = ['squares', 'white', 'video'];
+    this.currentOption = 0;
+    window.onkeypress = (ev) => {
+      this.currentOption++;
+      this.currentOption %= 3;
+      this.chooseMedia(this.options[this.currentOption]);
+    }
+
     this.filterColorRGB = {
       r: 0,
       g: 0,
@@ -35,31 +43,56 @@ export default class Settings {
       .onChange(this.setColor.bind(this));
     this.gui.add(this.params, 'squares')
       .name('Squares')
-      .onChange(this.changeMedia('rgb.png', false, 'squares'))
+      .onChange(() => { this.changeMedia('squares') })
       .listen();
     this.gui.add(this.params, 'white')
       .name('White')
-      .onChange(this.changeMedia('white.jpg', false, 'white'))
+      .onChange(() => { this.changeMedia('white') })
       .listen();
     this.gui.add(this.params, 'video')
       .name('Video')
-      .onChange(this.changeMedia('colors.webm', true, 'video'))
+      .onChange(() => { this.changeMedia('video') })
       .listen();
 
     this.setColor();
+
+    this.mouseMoveTimer = null;
+    $(document).mousemove(this.mouseMove.bind(this));
+    this.mouseMove();
+  }
+
+  mouseMove() {
+    let gui = this.gui;
+
+    if (this.mouseMoveTimer) {
+      clearTimeout(this.mouseMoveTimer);
+      this.mouseMoveTimer = null;
+    }
+
+    $(gui.domElement).fadeIn();
+
+    this.mouseMoveTimer = setTimeout(() => {
+      $(gui.domElement).fadeOut();
+    }, 3000)
   }
 
   setColor() {
     this.filterColorRGB = hexToRgb(this.params.filterColor);
   }
 
-  changeMedia(filename, video, param) {
-    return () => {
-      this.params['squares'] = false;
-      this.params['white'] = false;
-      this.params['video'] = false;
-      this.params[param] = true;
-      this.app.loadMedia(filename, video);
+  chooseMedia(media) {
+    this.params['squares'] = false;
+    this.params['white'] = false;
+    this.params['video'] = false;
+    this.params[media] = true;
+
+    let paramFileMap = {
+      'squares': 'rgb.png',
+      'white': 'white.jpg',
+      'video': 'colors.webm'
     }
+
+    let filename = paramFileMap[media];
+    this.app.loadMedia(filename, media == 'video');
   }
 }
